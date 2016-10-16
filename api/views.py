@@ -16,7 +16,7 @@ def gen_answers(question_id):
 	resp = requests.get(url=question_url)
 	data = json.loads(resp.text)
 	answer_links = [ "http://stackoverflow.com/a/%s"%i['answer_id'] for i in data['items']]
-	return answer_links
+	return answer_links[:2]
 
 
 
@@ -33,4 +33,6 @@ def index(request):
 
 	questions_object = [ dict(id=q['question_id'],answers = gen_answers(q['question_id']),title=q['title'],image=gen_image(q['title'])) for q in data['items']]
 
-	return JsonResponse(questions_object,safe=False)
+	good_questions = [q for q in questions_object if len(q['answers']) == 2 ]
+
+	return JsonResponse(good_questions,safe=False)
